@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import com.lucabarbara.awcamera.R;
 
-import butterknife.ButterKnife;
 
 /**
  * Created by luca1897 on 23/06/17.
@@ -33,7 +32,6 @@ public class VideoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_video, container, false);
-        ButterKnife.bind(this,rootView);
 
         return rootView;
     }
