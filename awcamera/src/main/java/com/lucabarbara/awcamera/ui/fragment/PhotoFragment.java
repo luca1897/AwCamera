@@ -126,7 +126,12 @@ public class PhotoFragment extends Fragment {
         });
 
         mCameraView.start();
-        mCameraView.setFlash(CameraKit.Constants.FLASH_OFF);
+
+        mCameraView.setFlash(AwCamera.getDefaultFlashMode());
+        setFlashIcon(AwCamera.getDefaultFlashMode());
+
+        mCameraView.setFacing(AwCamera.getDefaultCameraMode());
+        setCameraModeIcon(AwCamera.getDefaultCameraMode());
     }
 
     private void saveBitmapToPng(Bitmap bmp, File file)
@@ -153,12 +158,7 @@ public class PhotoFragment extends Fragment {
         if(mCameraView != null)
         {
             int f = mCameraView.toggleFacing();
-            if(f == CameraKit.Constants.FACING_BACK)
-            {
-                mSwitchCamera.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_camera_rear_white));
-            }else{
-                mSwitchCamera.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_camera_front_white));
-            }
+            setCameraModeIcon(f);
         }
     }
 
@@ -167,18 +167,34 @@ public class PhotoFragment extends Fragment {
         if(mCameraView != null)
         {
             int f = mCameraView.toggleFlash();
-            if(f == CameraKit.Constants.FLASH_OFF)
-            {
-                mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_off_white));
-            }else if(f == CameraKit.Constants.FLASH_ON)
-            {
-                mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_on_white));
-            }else if(f == CameraKit.Constants.FLASH_AUTO)
-            {
-                mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_auto_white));
-            }else{
-                mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_on_white));
-            }
+            setFlashIcon(f);
+
+        }
+    }
+
+    private void setCameraModeIcon(int mode)
+    {
+        if(mode == CameraKit.Constants.FACING_BACK)
+        {
+            mSwitchCamera.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_camera_rear_white));
+        }else{
+            mSwitchCamera.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_camera_front_white));
+        }
+    }
+
+    private void setFlashIcon(int mode)
+    {
+        if(mode == CameraKit.Constants.FLASH_OFF)
+        {
+            mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_off_white));
+        }else if(mode == CameraKit.Constants.FLASH_ON)
+        {
+            mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_on_white));
+        }else if(mode == CameraKit.Constants.FLASH_AUTO)
+        {
+            mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_auto_white));
+        }else{
+            mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_on_white));
         }
     }
 

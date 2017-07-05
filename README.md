@@ -7,8 +7,22 @@ Instagram-like photo browser
 ## Docs
 ### Methods:
 ```java
-AwCamera.setGalleryEnabled(true); // enables/disables gallery tab. (default: true)
-AwCamera.setPhotoEnabled(true);   // enables/disables photo tab. (default: true)
+// enables/disables gallery tab. (default: true)
+AwCamera.setGalleryEnabled(true); 
+// enables/disables photo tab. (default: true)
+AwCamera.setPhotoEnabled(true);   
+
+// set default flash mode (default: 0)
+//0 = OFF
+//1 = ON
+//2 = AUTO
+AwCamera.setDefaultFlashMode(0); 
+
+// set default camera type (default: 0)
+//0 = BACK
+//1 = FRONT
+AwCamera.setDefaultCameraMode(0); 
+
 ```
 ### Example:
 ```java

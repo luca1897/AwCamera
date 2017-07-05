@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.flurgle.camerakit.CameraKit;
 import com.lucabarbara.awcamera.R;
 import com.lucabarbara.awcamera.ui.adapter.HomePagerAdapter;
 
@@ -29,6 +30,7 @@ public class AwCamera extends AppCompatActivity {
     private HomePagerAdapter mPagerAdapter;
 
     public final int REQUEST_PERMISSION_EXTERNAL_STORAGE = 0;
+    public final int REQUEST_PERMISSION_CAMERA = 16;
 
     private final String galleryPath = Environment.getExternalStorageDirectory() + "/" + android.os.Environment.DIRECTORY_DCIM;
 
@@ -50,8 +52,10 @@ public class AwCamera extends AppCompatActivity {
     private static boolean GALLERY_ENABLED = true;
     private static boolean VIDEO_ENABLED = false;
 
+    private static int DEFAULT_FLASH_MODE = 0;
+    private static int DEFAULT_CAMERA_MODE = 0;
+
     private ArrayList<PAGE> listTabs;
-    private boolean hasCameraPermission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,6 +193,14 @@ public class AwCamera extends AppCompatActivity {
             } else {
                 // User refused to grant permission.
             }
+        }else if(requestCode == REQUEST_PERMISSION_CAMERA)
+        {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (mPagerAdapter.mPhotoFragment != null)
+                    mPagerAdapter.mPhotoFragment.startCamera();
+            } else {
+                // User refused to grant permission.
+            }
         }
     }
 
@@ -209,9 +221,6 @@ public class AwCamera extends AppCompatActivity {
         return galleryPath;
     }
 
-    public boolean getCameraPermissionGranted() {
-        return hasCameraPermission;
-    }
 
     public static boolean isPhotoEnabled() {
         return PHOTO_ENABLED;
@@ -238,4 +247,19 @@ public class AwCamera extends AppCompatActivity {
     //}
 
 
+    public static int getDefaultFlashMode() {
+        return DEFAULT_FLASH_MODE;
+    }
+
+    public static void setDefaultFlashMode(int defaultFlashMode) {
+        DEFAULT_FLASH_MODE = defaultFlashMode;
+    }
+
+    public static int getDefaultCameraMode() {
+        return DEFAULT_CAMERA_MODE;
+    }
+
+    public static void setDefaultCameraMode(int defaultCameraMode) {
+        DEFAULT_CAMERA_MODE = defaultCameraMode;
+    }
 }
