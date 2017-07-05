@@ -9,7 +9,6 @@ Instagram-like photo browser
 ```java
 AwCamera.setGalleryEnabled(true); // enables/disables gallery tab. (default: true)
 AwCamera.setPhotoEnabled(true);   // enables/disables photo tab. (default: true)
-AwCamera.setVideoEnabled(true);   // enables/disables video tab. (default: true)
 ```
 ### Example:
 ```java
