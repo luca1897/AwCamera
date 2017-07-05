@@ -37,5 +37,9 @@ AwCamera.setVideoEnabled(true);   // enables/disables video tab. (default: true)
         }
     }
 ```
+
+## Thanks to
+#### CameraKit-Android: https://github.com/gogopop/CameraKit-Android
+
 ## License
 AwCamera is released under the MIT license.
