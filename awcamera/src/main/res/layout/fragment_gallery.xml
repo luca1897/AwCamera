@@ -22,10 +22,11 @@
                 android:layout_height="match_parent"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-                <ImageView
+                <com.bm.library.PhotoView
                     android:id="@+id/parallax_header_imageview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:clickable="true"
                     android:scaleType="centerCrop"
                     app:layout_collapseMode="parallax" />
 

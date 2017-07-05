@@ -8,64 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
-        <!--
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
 
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:background="?attr/colorPrimary"
-                    app:popupTheme="@style/AppTheme.PopupOverlay">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageButton
-                            android:id="@+id/toolbar_back"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_centerVertical="true"
-                            android:layout_marginEnd="14dp"
-                            android:layout_marginRight="14dp"
-                            android:background="@android:color/transparent"
-
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/ic_arrow_back_black"
-                            android:textColor="#0186e7"
-                            android:textSize="14dp" />
-
-                        <TextView
-                            android:id="@+id/toolbar_title"
-                            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:gravity="center"
-                            android:text="Photo"
-                            android:textColor="#000"
-                            android:textSize="18dp" />
-
-                        <ImageButton
-                            android:id="@+id/toolbar_continue"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginEnd="14dp"
-                            android:layout_marginRight="14dp"
-                            android:background="@android:color/transparent"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/ic_check_black"
-                            android:textColor="#0186e7"
-                            android:textSize="14dp" />
-                    </RelativeLayout>
-
-                </android.support.v7.widget.Toolbar>
-        -->
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
@@ -80,12 +23,12 @@
             android:layout_height="0dp"
             android:background="#2e3032"
             android:layout_weight="0.7">
-            <io.fotoapparat.view.CameraView
-                android:id="@+id/camera_view"
-                android:visibility="visible"
+            <com.flurgle.camerakit.CameraView
+                android:id="@+id/camera"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-            <ImageView
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true" />
+            <com.bm.library.PhotoView
                 android:id="@+id/image_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -94,7 +37,16 @@
                 android:layout_alignParentBottom="true"
                 android:id="@+id/btn_switch_camera"
                 android:layout_margin="20dp"
-                android:src="@drawable/ic_camera_front_white"
+                android:src="@drawable/ic_camera_rear_white"
+                android:background="@drawable/btn_oval_bg"
+                android:layout_height="50dp" />
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:id="@+id/btn_toggle_flash"
+                android:layout_margin="20dp"
+                android:src="@drawable/ic_flash_off_white"
                 android:background="@drawable/btn_oval_bg"
                 android:layout_height="50dp" />
         </RelativeLayout>

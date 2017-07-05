@@ -5,6 +5,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
@@ -13,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.bm.library.PhotoView;
 import com.lucabarbara.awcamera.R;
 import com.lucabarbara.awcamera.ui.activity.AwCamera;
 import com.lucabarbara.awcamera.ui.adapter.GalleryAdapter;
@@ -29,7 +33,7 @@ import java.util.List;
 public class GalleryFragment extends Fragment {
 
     private GridView mGridGallery;
-    private ImageView mImageParallaxHeader;
+    private PhotoView mImageParallaxHeader;
 
     private GalleryAdapter galleryAdapter;
     private List<String> images = new ArrayList<>();
@@ -59,10 +63,14 @@ public class GalleryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         mGridGallery = (GridView) rootView.findViewById(R.id.grid_gallery);
-        mImageParallaxHeader = (ImageView) rootView.findViewById(R.id.parallax_header_imageview);
+        mImageParallaxHeader = (PhotoView) rootView.findViewById(R.id.parallax_header_imageview);
+        mImageParallaxHeader.enable();
 
         awCamera = (AwCamera) getActivity();
+
+
         initGridGallery();
+
         return rootView;
     }
 

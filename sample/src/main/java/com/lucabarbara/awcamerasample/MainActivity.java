@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //AwCamera.setGalleryEnabled(true);
                 //AwCamera.setPhotoEnabled(true);
-                AwCamera.setVideoEnabled(false);
+                //AwCamera.setVideoEnabled(false);
 
                 Intent i = new Intent(MainActivity.this,AwCamera.class);
                 startActivityForResult(i, RESULT_IMAGE);

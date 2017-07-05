@@ -19,7 +19,7 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
 
     public GalleryFragment mGalleryFragment;
     public PhotoFragment mPhotoFragment;
-    public VideoFragment mVideoFragment;
+//    public VideoFragment mVideoFragment;
     private ArrayList<AwCamera.PAGE> listTabs;
 
     public HomePagerAdapter(FragmentManager fm,ArrayList<AwCamera.PAGE> listTabs) {
@@ -30,8 +30,8 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
             mGalleryFragment = GalleryFragment.newInstance(0);
         if(mPhotoFragment ==null)
             mPhotoFragment = PhotoFragment.newInstance(1);
-        if(mVideoFragment ==null)
-            mVideoFragment = VideoFragment.newInstance(2);
+//        if(mVideoFragment ==null)
+//            mVideoFragment = VideoFragment.newInstance(2);
     }
 
 
@@ -49,10 +49,10 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
                 if(mPhotoFragment==null)
                     mPhotoFragment = PhotoFragment.newInstance(1);
                 return mPhotoFragment;
-            case Video:
-                if(mVideoFragment==null)
-                    mVideoFragment = VideoFragment.newInstance(2);
-                return mVideoFragment;
+//            case Video:
+//                if(mVideoFragment==null)
+//                    mVideoFragment = VideoFragment.newInstance(2);
+//                return mVideoFragment;
             default:
                 return null;
         }
@@ -68,4 +68,6 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         return listTabs.get(position).toString();
     }
+
+
 }

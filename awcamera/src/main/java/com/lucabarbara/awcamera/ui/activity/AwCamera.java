@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.lucabarbara.awcamera.R;
 import com.lucabarbara.awcamera.ui.adapter.HomePagerAdapter;
-import com.lucabarbara.awcamera.utils.PermissionsDelegate;
 
 import java.util.ArrayList;
 
@@ -29,7 +28,6 @@ public class AwCamera extends AppCompatActivity {
 
     private HomePagerAdapter mPagerAdapter;
 
-    private final PermissionsDelegate permissionsDelegate = new PermissionsDelegate(this);
     public final int REQUEST_PERMISSION_EXTERNAL_STORAGE = 0;
 
     private final String galleryPath = Environment.getExternalStorageDirectory() + "/" + android.os.Environment.DIRECTORY_DCIM;
@@ -50,7 +48,7 @@ public class AwCamera extends AppCompatActivity {
 
     private static boolean PHOTO_ENABLED = true;
     private static boolean GALLERY_ENABLED = true;
-    private static boolean VIDEO_ENABLED = true;
+    private static boolean VIDEO_ENABLED = false;
 
     private ArrayList<PAGE> listTabs;
     private boolean hasCameraPermission;
@@ -94,10 +92,12 @@ public class AwCamera extends AppCompatActivity {
                     setContinueButtonVisibility(View.VISIBLE);
                 }
 
-                if(tab.getPosition()==1)
+                if(tab.getPosition()==0)
                 {
-                    hasCameraPermission = getPermissionsDelegate().hasCameraPermission();
-                    getPermissionsDelegate().requestCameraPermission();
+                    stopCamera();
+                }
+                if(tab.getPosition()==1) {
+                    startCamera();
                 }
             }
 
@@ -189,20 +189,21 @@ public class AwCamera extends AppCompatActivity {
             } else {
                 // User refused to grant permission.
             }
-        }else if (permissionsDelegate.resultGranted(requestCode, permissions, grantResults)) {
-            if(mPagerAdapter.mPhotoFragment != null)
-            {
-                hasCameraPermission = true;
-                mPagerAdapter.mPhotoFragment.initCamera();
-            }
         }
     }
 
-
-    public PermissionsDelegate getPermissionsDelegate()
+    private void startCamera()
     {
-        return permissionsDelegate;
+        if(mPagerAdapter.mPhotoFragment != null)
+            mPagerAdapter.mPhotoFragment.startCamera();
     }
+
+    private void stopCamera()
+    {
+        if(mPagerAdapter.mPhotoFragment != null)
+            mPagerAdapter.mPhotoFragment.stopCamera();
+    }
+
 
     public String getGalleryPath() {
         return galleryPath;
@@ -232,7 +233,9 @@ public class AwCamera extends AppCompatActivity {
         return VIDEO_ENABLED;
     }
 
-    public static void setVideoEnabled(boolean videoEnabled) {
-        VIDEO_ENABLED = videoEnabled;
-    }
+    //public static void setVideoEnabled(boolean videoEnabled) {
+    //    VIDEO_ENABLED = videoEnabled;
+    //}
+
+
 }

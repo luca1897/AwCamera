@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.flurgle.camerakit.CameraView;
 import com.lucabarbara.awcamera.R;
 
 
@@ -16,6 +17,7 @@ import com.lucabarbara.awcamera.R;
 public class VideoFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private CameraView cameraView;
 
     public VideoFragment() {
     }
@@ -32,7 +34,9 @@ public class VideoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_video, container, false);
+        cameraView = (CameraView) rootView.findViewById(R.id.camera);
 
         return rootView;
     }
+
 }

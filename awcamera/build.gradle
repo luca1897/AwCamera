@@ -29,9 +29,10 @@ dependencies {
     })
     implementation 'com.android.support:appcompat-v7:25.4.0'
     testImplementation 'junit:junit:4.12'
-    compile 'io.fotoapparat.fotoapparat:library:1.0.2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:design:25.4.0'
     compile 'com.github.nirhart:parallaxscroll:1.0'
+    compile 'com.bm.photoview:library:1.4.1'
+    compile 'com.flurgle:camerakit:0.9.17'
 }

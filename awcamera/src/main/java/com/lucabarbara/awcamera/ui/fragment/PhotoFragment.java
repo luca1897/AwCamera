@@ -1,5 +1,7 @@
 package com.lucabarbara.awcamera.ui.fragment;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,37 +11,20 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.bm.library.PhotoView;
+import com.flurgle.camerakit.CameraKit;
+import com.flurgle.camerakit.CameraListener;
+import com.flurgle.camerakit.CameraView;
 import com.lucabarbara.awcamera.R;
 import com.lucabarbara.awcamera.ui.activity.AwCamera;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import io.fotoapparat.Fotoapparat;
-import io.fotoapparat.FotoapparatSwitcher;
-import io.fotoapparat.parameter.LensPosition;
-import io.fotoapparat.preview.Frame;
-import io.fotoapparat.preview.FrameProcessor;
-import io.fotoapparat.result.PendingResult;
-import io.fotoapparat.result.PhotoResult;
-import io.fotoapparat.view.CameraView;
-
-import static io.fotoapparat.log.Loggers.fileLogger;
-import static io.fotoapparat.log.Loggers.logcat;
-import static io.fotoapparat.log.Loggers.loggers;
-import static io.fotoapparat.parameter.selector.AspectRatioSelectors.standardRatio;
-import static io.fotoapparat.parameter.selector.FlashSelectors.autoFlash;
-import static io.fotoapparat.parameter.selector.FlashSelectors.autoRedEye;
-import static io.fotoapparat.parameter.selector.FlashSelectors.off;
-import static io.fotoapparat.parameter.selector.FlashSelectors.torch;
-import static io.fotoapparat.parameter.selector.FocusModeSelectors.autoFocus;
-import static io.fotoapparat.parameter.selector.FocusModeSelectors.continuousFocus;
-import static io.fotoapparat.parameter.selector.FocusModeSelectors.fixed;
-import static io.fotoapparat.parameter.selector.LensPositionSelectors.lensPosition;
-import static io.fotoapparat.parameter.selector.Selectors.firstAvailable;
-import static io.fotoapparat.parameter.selector.SizeSelectors.biggestSize;
 
 /**
  * Created by luca1897 on 23/06/17.
@@ -53,12 +38,10 @@ public class PhotoFragment extends Fragment {
     private CameraView mCameraView;
     private ImageButton mTakePhoto;
     private ImageButton mSwitchCamera;
-    private ImageView mImageView;
+    private ImageButton mToggleFlash;
+    private PhotoView mImageView;
 
     private Uri pathImage = null;
-    private Fotoapparat frontFotoapparat;
-    private Fotoapparat backFotoapparat;
-    public FotoapparatSwitcher fotoapparatSwitcher;
 
 
     private static final String ARG_SECTION_NUMBER = "section_number";
@@ -79,11 +62,12 @@ public class PhotoFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_photo, container, false);
 
-        mCameraView = (CameraView)rootView.findViewById(R.id.camera_view);
+        mCameraView = (CameraView)rootView.findViewById(R.id.camera);
         mTakePhoto = (ImageButton)rootView.findViewById(R.id.btn_take_photo);
         mSwitchCamera = (ImageButton) rootView.findViewById(R.id.btn_switch_camera);
-        mImageView = (ImageView)rootView.findViewById(R.id.image_view);
-
+        mToggleFlash = (ImageButton) rootView.findViewById(R.id.btn_toggle_flash);
+        mImageView = (PhotoView)rootView.findViewById(R.id.image_view);
+        mImageView.enable();
 
         awCamera = (AwCamera)getActivity();
 
@@ -93,44 +77,44 @@ public class PhotoFragment extends Fragment {
 
     public void initCamera()
     {
-        if(awCamera.getCameraPermissionGranted())
-        {
-            mCameraView.setVisibility(View.VISIBLE);
-        }else{
-            return;
-        }
-
-        frontFotoapparat = createFotoapparat(LensPosition.FRONT);
-        backFotoapparat = createFotoapparat(LensPosition.BACK);
-        fotoapparatSwitcher = FotoapparatSwitcher.withDefault(backFotoapparat);
-
-        mTakePhoto.setOnClickListener(new View.OnClickListener() {
+        mCameraView.setCameraListener(new CameraListener() {
             @Override
-            public void onClick(View view) {
-                if(!fotoapparatSwitcher.getCurrentFotoapparat().isAvailable())
-                    return;
-                PhotoResult photoResult = fotoapparatSwitcher.getCurrentFotoapparat().takePicture();
-
+            public void onPictureTaken(byte[] picture) {
+                super.onPictureTaken(picture);
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
                 Date now = new Date();
-                String fileName = "IMG_" + formatter.format(now) + ".jpg";
+                String fileName = "IMG_" + formatter.format(now) + ".png";
 
                 final File file = new File(
                         awCamera.getGalleryPath(),
                         fileName
                 );
-                photoResult.saveToFile(file).whenAvailable(new PendingResult.Callback<Void>() {
-                    @Override
-                    public void onResult(Void v) {
-                        pathImage = Uri.fromFile(file);
-                        Picasso.with(getActivity()).load(file).fit().centerCrop()
-                                .into(mImageView);
-                        mCameraView.setVisibility(View.INVISIBLE);
-                        mSwitchCamera.setVisibility(View.GONE);
-                        fotoapparatSwitcher.stop();
-                        awCamera.setContinueButtonVisibility(View.VISIBLE);
-                    }
-                });
+
+                Bitmap result = BitmapFactory.decodeByteArray(picture, 0, picture.length);
+
+                saveBitmapToPng(result,file);
+
+                pathImage = Uri.fromFile(file);
+                Picasso.with(getActivity()).load(file).fit().centerCrop()
+                        .into(mImageView);
+                mCameraView.setVisibility(View.INVISIBLE);
+                mSwitchCamera.setVisibility(View.GONE);
+                mToggleFlash.setVisibility(View.GONE);
+                awCamera.setContinueButtonVisibility(View.VISIBLE);
+            }
+        });
+
+        mTakePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCameraView.captureImage();
+            }
+        });
+
+        mToggleFlash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleFlash();
             }
         });
 
@@ -141,40 +125,60 @@ public class PhotoFragment extends Fragment {
             }
         });
 
-        fotoapparatSwitcher.start();
-
+        mCameraView.start();
+        mCameraView.setFlash(CameraKit.Constants.FLASH_OFF);
     }
 
-    private Fotoapparat createFotoapparat(LensPosition position) {
-        return Fotoapparat
-                .with(awCamera)
-                .into(mCameraView)
-                .photoSize(standardRatio(biggestSize()))
-                .lensPosition(lensPosition(position))
-                .focusMode(firstAvailable(
-                        continuousFocus(),
-                        autoFocus(),
-                        fixed()
-                ))
-                .flash(firstAvailable(
-                        autoRedEye(),
-                        autoFlash(),
-                        torch(),
-                        off()
-                ))
-                .frameProcessor(new SampleFrameProcessor())
-                .logger(loggers(
-                        logcat(),
-                        fileLogger(awCamera)
-                ))
-                .build();
+    private void saveBitmapToPng(Bitmap bmp, File file)
+    {
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
 
     private void switchCamera() {
-        if (fotoapparatSwitcher.getCurrentFotoapparat() == frontFotoapparat) {
-            fotoapparatSwitcher.switchTo(backFotoapparat);
-        } else {
-            fotoapparatSwitcher.switchTo(frontFotoapparat);
+        if(mCameraView != null)
+        {
+            int f = mCameraView.toggleFacing();
+            if(f == CameraKit.Constants.FACING_BACK)
+            {
+                mSwitchCamera.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_camera_rear_white));
+            }else{
+                mSwitchCamera.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_camera_front_white));
+            }
+        }
+    }
+
+    private void toggleFlash()
+    {
+        if(mCameraView != null)
+        {
+            int f = mCameraView.toggleFlash();
+            if(f == CameraKit.Constants.FLASH_OFF)
+            {
+                mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_off_white));
+            }else if(f == CameraKit.Constants.FLASH_ON)
+            {
+                mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_on_white));
+            }else if(f == CameraKit.Constants.FLASH_AUTO)
+            {
+                mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_auto_white));
+            }else{
+                mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_on_white));
+            }
         }
     }
 
@@ -183,22 +187,25 @@ public class PhotoFragment extends Fragment {
             mCameraView.setVisibility(visible);
     }
 
-    public void startPhotoapparatSwitcher()
-    {
-        if(fotoapparatSwitcher != null)
-            fotoapparatSwitcher.start();
-    }
 
     public Uri getPathImage() {
         return pathImage;
     }
 
-    private class SampleFrameProcessor implements FrameProcessor {
-
-        @Override
-        public void processFrame(Frame frame) {
-            // Perform frame processing, if needed
+    public void startCamera()
+    {
+        if(mCameraView != null)
+        {
+            mCameraView.start();
         }
-
     }
+
+    public void stopCamera()
+    {
+        if(mCameraView != null)
+        {
+            mCameraView.stop();
+        }
+    }
+
 }
