@@ -1,7 +1,7 @@
 # AwCamera
 Instagram-like photo browser
 ## Screen
-![alt text](http://www.lucabarbara.com/awcamera/screen1.png)
+![alt text](http://www.lucabarbara.com/awcamera/screen3.png)
 ## Features
 
 ## Docs
