@@ -35,4 +35,5 @@ dependencies {
     compile 'com.github.nirhart:parallaxscroll:1.0'
     compile 'com.bm.photoview:library:1.4.1'
     compile 'com.flurgle:camerakit:0.9.17'
+    compile 'com.github.zomato:androidphotofilters:1.0.1'
 }

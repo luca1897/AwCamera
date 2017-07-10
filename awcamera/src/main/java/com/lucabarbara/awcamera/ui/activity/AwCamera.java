@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -34,7 +35,7 @@ public class AwCamera extends AppCompatActivity {
 
     private final String galleryPath = Environment.getExternalStorageDirectory() + "/" + android.os.Environment.DIRECTORY_DCIM;
 
-
+    private PAGE oldPage = PAGE.Gallery;
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
@@ -45,12 +46,13 @@ public class AwCamera extends AppCompatActivity {
     public enum PAGE {
         Gallery,
         Photo,
-        Video
+        Effects
     }
 
     private static boolean PHOTO_ENABLED = true;
     private static boolean GALLERY_ENABLED = true;
-    private static boolean VIDEO_ENABLED = false;
+    private static boolean EFFECTS_ENABLED = true;
+
 
     private static int DEFAULT_FLASH_MODE = 0;
     private static int DEFAULT_CAMERA_MODE = 0;
@@ -67,9 +69,8 @@ public class AwCamera extends AppCompatActivity {
             listTabs.add(PAGE.Gallery);
         if(PHOTO_ENABLED)
             listTabs.add(PAGE.Photo);
-        if(VIDEO_ENABLED)
-            listTabs.add(PAGE.Video);
-
+        if(EFFECTS_ENABLED)
+            listTabs.add(PAGE.Effects);
 
 
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -83,26 +84,11 @@ public class AwCamera extends AppCompatActivity {
         //getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         mViewPager.setAdapter(mPagerAdapter);
-        mTabLayout.setupWithViewPager(mViewPager);
+
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                mToolbarTitle.setText(mPagerAdapter.getPageTitle(tab.getPosition()));
-                String path = getImageSelected();
-                if(path == null)
-                {
-                    setContinueButtonVisibility(View.GONE);
-                }else{
-                    setContinueButtonVisibility(View.VISIBLE);
-                }
-
-                if(tab.getPosition()==0)
-                {
-                    stopCamera();
-                }
-                if(tab.getPosition()==1) {
-                    startCamera();
-                }
+                mViewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -116,19 +102,57 @@ public class AwCamera extends AppCompatActivity {
             }
         });
 
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mToolbarTitle.setText(mPagerAdapter.getPageTitle(position));
+                String path = getImageSelected();
+                if(path == null)
+                {
+                    setContinueButtonVisibility(View.GONE);
+                }else{
+                    setContinueButtonVisibility(View.VISIBLE);
+                }
+
+                if(position==1)
+                {
+                    startCamera();
+                }
+                else {
+                    stopCamera();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+
         mContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String path = getImageSelected();
-                if(path != null)
+                oldPage = PAGE.values()[mViewPager.getCurrentItem()];
+                if(oldPage != PAGE.Effects)
+                {
+                    showEffectsFragment();
+                }else{
+                    String path = "file:" + mPagerAdapter.mEffectsFragment.saveImage();
                     setActivityResult(path);
+                }
             }
         });
 
         mBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                onBackPressed();
             }
         });
 
@@ -162,6 +186,8 @@ public class AwCamera extends AppCompatActivity {
 
     public void setActivityResult(String filename)
     {
+        if(filename == null)
+            return;
         //Toast.makeText(this,filename,Toast.LENGTH_SHORT).show();
         Intent data = new Intent();
         data.setData(Uri.parse(filename));
@@ -169,7 +195,16 @@ public class AwCamera extends AppCompatActivity {
         finish();
     }
 
-
+    @Override
+    public void onBackPressed() {
+        if(mViewPager.getCurrentItem() == PAGE.Effects.ordinal())
+        {
+            mViewPager.setCurrentItem(oldPage.ordinal(),false);
+            mTabLayout.setVisibility(View.VISIBLE);
+        }else{
+            super.onBackPressed();
+        }
+    }
 
     /**
      * check external storage and camera permission
@@ -204,6 +239,19 @@ public class AwCamera extends AppCompatActivity {
         }
     }
 
+    private void showEffectsFragment()
+    {
+        mViewPager.setCurrentItem(2,false);
+        mTabLayout.setVisibility(View.GONE);
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                if(mPagerAdapter.mEffectsFragment != null)
+                mPagerAdapter.mEffectsFragment.initUI();
+            }
+        }, 150);
+    }
+
+
     private void startCamera()
     {
         if(mPagerAdapter.mPhotoFragment != null)
@@ -237,15 +285,6 @@ public class AwCamera extends AppCompatActivity {
     public static void setGalleryEnabled(boolean galleryEnabled) {
         GALLERY_ENABLED = galleryEnabled;
     }
-
-    public static boolean isVideoEnabled() {
-        return VIDEO_ENABLED;
-    }
-
-    //public static void setVideoEnabled(boolean videoEnabled) {
-    //    VIDEO_ENABLED = videoEnabled;
-    //}
-
 
     public static int getDefaultFlashMode() {
         return DEFAULT_FLASH_MODE;

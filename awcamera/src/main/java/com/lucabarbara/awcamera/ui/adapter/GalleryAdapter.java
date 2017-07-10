@@ -32,7 +32,7 @@ public class GalleryAdapter extends BaseAdapter {
     private AwCamera awCamera;
     private GalleryFragment galleryFragment;
 
-    private static int imageSelected = -1;
+    private int imageSelected = -1;
 
     public GalleryAdapter(GalleryFragment galleryFragment, List<String> images) {
         this.awCamera = (AwCamera)galleryFragment.getActivity();
@@ -112,11 +112,11 @@ public class GalleryAdapter extends BaseAdapter {
         return vi;
     }
 
-    public static int getImageSelected() {
+    public int getImageSelected() {
         return imageSelected;
     }
 
-    public static void setIndexImageSelected(int imageSelected) {
-        GalleryAdapter.imageSelected = imageSelected;
+    public void setIndexImageSelected(int imageSelected) {
+        this.imageSelected = imageSelected;
     }
 }

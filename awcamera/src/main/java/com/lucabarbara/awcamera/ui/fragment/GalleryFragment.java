@@ -93,7 +93,7 @@ public class GalleryFragment extends Fragment {
         images.clear();
         images.add("ic_gallery");
         images.addAll(getCameraImages());
-        if(images.size()>1)
+        if(images.size()>2)
         {
             galleryAdapter.setIndexImageSelected(1);
             setImageSelected(Uri.parse(images.get(1)));
@@ -148,7 +148,7 @@ public class GalleryFragment extends Fragment {
             case RESULT_LOAD_IMAGE_FROM_GALLERY:
                 if (data != null) {
                     setImageSelected(data.getData());
-                    GalleryAdapter.setIndexImageSelected(-1);
+                    galleryAdapter.setIndexImageSelected(-1);
                     galleryAdapter.notifyDataSetChanged();
                 }
                 break;

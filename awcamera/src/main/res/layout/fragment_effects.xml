@@ -23,23 +23,11 @@
             android:layout_height="0dp"
             android:background="#2e3032"
             android:layout_weight="0.7">
-            <com.flurgle.camerakit.CameraView
-                android:id="@+id/camera"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true" />
             <com.bm.library.PhotoView
                 android:id="@+id/image_view"
+                android:scaleType="centerCrop"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_alignParentBottom="true"
-                android:id="@+id/btn_switch_camera"
-                android:layout_margin="20dp"
-                android:src="@drawable/ic_camera_front_white"
-                android:background="@drawable/btn_oval_bg"
-                android:layout_height="50dp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -47,13 +35,14 @@
             android:layout_height="0dp"
             android:background="#F8F8F8"
             android:layout_weight="0.3">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <ImageButton
-                android:layout_width="60dp"
-                android:layout_centerInParent="true"
-                android:id="@+id/btn_take_photo"
-                android:background="@drawable/take_photo_bg"
-                android:layout_height="60dp" />
+            </android.support.v7.widget.RecyclerView>
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

@@ -5,9 +5,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.lucabarbara.awcamera.ui.activity.AwCamera;
+import com.lucabarbara.awcamera.ui.fragment.EffectsFragment;
 import com.lucabarbara.awcamera.ui.fragment.GalleryFragment;
 import com.lucabarbara.awcamera.ui.fragment.PhotoFragment;
-import com.lucabarbara.awcamera.ui.fragment.VideoFragment;
 
 import java.util.ArrayList;
 
@@ -19,6 +19,7 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
 
     public GalleryFragment mGalleryFragment;
     public PhotoFragment mPhotoFragment;
+    public EffectsFragment mEffectsFragment;
 //    public VideoFragment mVideoFragment;
     private ArrayList<AwCamera.PAGE> listTabs;
 
@@ -30,8 +31,8 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
             mGalleryFragment = GalleryFragment.newInstance(0);
         if(mPhotoFragment ==null)
             mPhotoFragment = PhotoFragment.newInstance(1);
-//        if(mVideoFragment ==null)
-//            mVideoFragment = VideoFragment.newInstance(2);
+        if(mEffectsFragment == null)
+            mEffectsFragment = EffectsFragment.newInstance(2);
     }
 
 
@@ -49,6 +50,10 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
                 if(mPhotoFragment==null)
                     mPhotoFragment = PhotoFragment.newInstance(1);
                 return mPhotoFragment;
+            case Effects:
+                if(mEffectsFragment==null)
+                    mEffectsFragment = EffectsFragment.newInstance(2);
+                return mEffectsFragment;
 //            case Video:
 //                if(mVideoFragment==null)
 //                    mVideoFragment = VideoFragment.newInstance(2);
