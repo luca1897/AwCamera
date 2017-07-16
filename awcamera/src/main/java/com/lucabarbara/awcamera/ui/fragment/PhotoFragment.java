@@ -43,6 +43,8 @@ public class PhotoFragment extends Fragment {
 
     private Uri pathImage = null;
 
+    private boolean photoTaken = false;
+
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -60,6 +62,7 @@ public class PhotoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setUserVisibleHint(false);
         View rootView = inflater.inflate(R.layout.fragment_photo, container, false);
 
         mCameraView = (CameraView)rootView.findViewById(R.id.camera);
@@ -81,6 +84,7 @@ public class PhotoFragment extends Fragment {
             @Override
             public void onPictureTaken(byte[] picture) {
                 super.onPictureTaken(picture);
+                photoTaken = true;
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
                 Date now = new Date();
                 String fileName = "IMG_" + formatter.format(now) + ".png";
@@ -101,13 +105,25 @@ public class PhotoFragment extends Fragment {
                 mSwitchCamera.setVisibility(View.GONE);
                 mToggleFlash.setVisibility(View.GONE);
                 awCamera.setContinueButtonVisibility(View.VISIBLE);
+                mImageView.setVisibility(View.VISIBLE);
+                mTakePhoto.setImageDrawable(getResources().getDrawable(R.drawable.ic_refresh_black));
             }
         });
 
         mTakePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCameraView.captureImage();
+                if(!photoTaken)
+                    mCameraView.captureImage();
+                else{
+                    mTakePhoto.setImageDrawable(null);
+                    photoTaken = false;
+                    mCameraView.setVisibility(View.VISIBLE);
+                    mSwitchCamera.setVisibility(View.VISIBLE);
+                    mImageView.setVisibility(View.GONE);
+                    mToggleFlash.setVisibility(View.VISIBLE);
+                    awCamera.setContinueButtonVisibility(View.GONE);
+                }
             }
         });
 
@@ -124,8 +140,6 @@ public class PhotoFragment extends Fragment {
                 switchCamera();
             }
         });
-
-        mCameraView.start();
 
         mCameraView.setFlash(AwCamera.getDefaultFlashMode());
         setFlashIcon(AwCamera.getDefaultFlashMode());
@@ -195,6 +209,15 @@ public class PhotoFragment extends Fragment {
             mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_auto_white));
         }else{
             mToggleFlash.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_flash_on_white));
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+        }
+        else {
         }
     }
 

@@ -2,7 +2,9 @@ package com.lucabarbara.awcamera.ui.fragment;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +27,7 @@ import com.zomato.photofilters.SampleFilters;
 import com.zomato.photofilters.imageprocessors.Filter;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -161,14 +164,32 @@ public class EffectsFragment extends Fragment {
 
     public void initUI() {
         String path = awCamera.getImageSelected();
+        path = Uri.parse(path).getPath();
         if(path != null) {
             BitmapFactory.Options opts = new BitmapFactory.Options();
             opts.inMutable = true;
             opts.inJustDecodeBounds = false;
-            originaBitmap = BitmapFactory.decodeFile(Uri.parse(path).getPath(),opts);
-            opts.inSampleSize = calculateInSampleSize(opts,300,300);
-            originaBitmap = BitmapFactory.decodeFile(Uri.parse(path).getPath(),opts);
 
+
+
+            originaBitmap = BitmapFactory.decodeFile(path,opts);
+            opts.inSampleSize = calculateInSampleSize(opts,300,300);
+            originaBitmap = BitmapFactory.decodeFile(path,opts);
+
+
+            try {
+                ExifInterface exif = new ExifInterface(path);
+                int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                int rotationInDegrees = exifToDegrees(rotation);
+                Matrix matrix = new Matrix();
+                if (rotation != 0f) {
+                    matrix.preRotate(rotationInDegrees);
+                    originaBitmap = Bitmap.createBitmap(originaBitmap,0,0,opts.outWidth,opts.outHeight,matrix,true);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             setImage(originaBitmap);
             bindDataToAdapter(originaBitmap);
@@ -197,5 +218,12 @@ public class EffectsFragment extends Fragment {
         }
 
         return inSampleSize;
+    }
+
+    private int exifToDegrees(int exifOrientation) {
+        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) { return 90; }
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {  return 180; }
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {  return 270; }
+        return 0;
     }
 }
